@@ -35,7 +35,51 @@ def ensure_pytds() -> None:
         )
 
 
+
+
+def connect_odbc(creds: DbCreds):
+    """Connect using Microsoft ODBC driver (recommended when pytds is rejected).
+
+    Requires:
+      - pyodbc
+      - ODBC Driver 18 for SQL Server installed in the runtime
+
+    Env knobs:
+      - VITA_DB_ODBC_DRIVER (default: ODBC Driver 18 for SQL Server)
+      - VITA_DB_ENCRYPT (default: no)
+      - VITA_DB_TRUST_CERT (default: yes)
+    """
+    try:
+        import pyodbc  # type: ignore
+    except Exception:
+        raise RuntimeError("Missing dependency 'pyodbc'. Install it and the ODBC driver.")
+
+    driver = os.environ.get("VITA_DB_ODBC_DRIVER", "ODBC Driver 18 for SQL Server").strip()
+    encrypt = os.environ.get("VITA_DB_ENCRYPT", "no").strip()
+    trust = os.environ.get("VITA_DB_TRUST_CERT", "yes").strip()
+
+    # Use tcp: prefix for clarity
+    server = creds.server
+    if not server.lower().startswith("tcp:"):
+        server = "tcp:" + server
+
+    conn_str = (
+        f"DRIVER={{{driver}}};"
+        f"SERVER={server};"
+        f"DATABASE={creds.database};"
+        f"UID={creds.user};"
+        f"PWD={creds.password};"
+        f"Encrypt={encrypt};"
+        f"TrustServerCertificate={trust};"
+        "Connection Timeout=10;"
+    )
+
+    return pyodbc.connect(conn_str)
 def connect(creds: DbCreds):
+    backend = os.environ.get("VITA_DB_BACKEND", "pytds").strip().lower()
+    if backend in ("odbc", "pyodbc"): 
+        return connect_odbc(creds)
+
     ensure_pytds()
     import pytds  # type: ignore
 
