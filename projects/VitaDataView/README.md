@@ -34,3 +34,18 @@ The tool returns (subset):
 - IniFileName
 - TestStartTime, TestEndTime, UploadDate
 - ResultDatFileName (xlsx), ResultJsonFileName (json), ResultRawFileName (zip)
+
+
+## Web UI (local)
+
+```bash
+cd projects/VitaDataView
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -U pip
+pip install -e '.[web]'
+
+# run
+vitadataview-web
+# open http://127.0.0.1:8899
+```

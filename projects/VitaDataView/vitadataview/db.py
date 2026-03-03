@@ -82,9 +82,7 @@ def query_rows(
     workstep: str = "",
     limit: int = 50,
 ) -> List[VitaRow]:
-    if not (process or process_like or workstep):
-        raise ValueError("Provide process/process_like/workstep or use list_* first")
-
+    # SN is required; filters are optional (but can return many rows).
     where = ["SerialNumber=%s"]
     params: List[Any] = [sn]
     if process:
