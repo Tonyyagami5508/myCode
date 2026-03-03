@@ -1,0 +1,13 @@
+# OS
+.DS_Store
+
+# Local scratch
+/tmp/
+
+# Secrets (never commit)
+**/*secret*
+**/*token*
+**/*password*
+credentials/
+.env
+.env.*
