@@ -162,4 +162,6 @@ def main() -> None:
     # For 'vitadataview-web'
     import uvicorn
 
-    uvicorn.run("vitadataview.webapp:app", host="127.0.0.1", port=int(os.environ.get("VITADV_PORT", "8899")), reload=False)
+    host = os.environ.get("VITADV_HOST", "127.0.0.1")
+    port = int(os.environ.get("VITADV_PORT", "8899"))
+    uvicorn.run("vitadataview.webapp:app", host=host, port=port, reload=False)

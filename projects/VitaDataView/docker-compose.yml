@@ -1,0 +1,13 @@
+services:
+  vitadataview:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8899:8899"
+    environment:
+      VITA_DB_CREDS: /creds/vita-db.json
+      VITADV_HOST: 0.0.0.0
+      VITADV_PORT: 8899
+    volumes:
+      - ~/.openclaw/workspace/credentials:/creds:ro
