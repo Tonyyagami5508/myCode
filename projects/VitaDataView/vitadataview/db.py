@@ -39,6 +39,11 @@ def connect(creds: DbCreds):
     ensure_pytds()
     import pytds  # type: ignore
 
+    # Optional TLS (some SQL Servers require encryption and will otherwise close the connection).
+    cafile = os.environ.get("VITA_DB_CAFILE", "").strip() or None
+    validate_host = os.environ.get("VITA_DB_VALIDATE_HOST", "1").strip() not in ("0", "false", "False")
+    enc_login_only = os.environ.get("VITA_DB_ENC_LOGIN_ONLY", "0").strip() in ("1", "true", "True")
+
     return pytds.connect(
         server=creds.server,
         database=creds.database,
@@ -46,6 +51,9 @@ def connect(creds: DbCreds):
         password=creds.password,
         timeout=10,
         login_timeout=10,
+        cafile=cafile,
+        validate_host=validate_host,
+        enc_login_only=enc_login_only,
     )
 
 
